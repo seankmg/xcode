@@ -26,12 +26,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
     
-    //userCell
-    //showDataCell
-    //postCell
-    
-    
-    
     struct Response: Codable { // or Decodable
         let username: String
         let name: String
@@ -97,16 +91,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         let time_and_date_of_post: String
     }
     
-    var post_data = [postsData(post_id: String(), question_by: String(), question_text: String(), answer_text: String(), liked_by: [String](), repost_by: [String](), time_and_date_of_post: String())] {
-        
-        
-        didSet {
-            
-            if finishedReq == 0 {
-                do_refresh()
-            }
-        }
-    }
+    var post_data = [postsData(post_id: String(), question_by: String(), question_text: String(), answer_text: String(), liked_by: [String](), repost_by: [String](), time_and_date_of_post: String())]
     
     
     
@@ -141,19 +126,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         
         
     }
-    
-    func do_refresh (){
-        print("refresh table")
-        DispatchQueue.global(qos: .background).async {
 
-            // Background Thread
-            DispatchQueue.main.async {
-
-                        //self.bottomTVC.reloadData()
-
-            }
-        }
-    }
     
     @objc func do_a_refresh (notification: NSNotification){ //add stuff
         print("refresh table")
@@ -179,17 +152,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                      
                  }
                 
-                /*
-                 
-                 if finishedReq == 0 {
-                     
-                 self.bottomTVC.reloadData()
-                  } else {
-                      finishedReq -= 1
-                  }
-                 
-                 
-                 */
             }
         }
     }
@@ -200,9 +162,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewWillAppear(_ animated: Bool) {
         getInfo()
     }
-    
-    
-    
     
     
     
@@ -221,22 +180,11 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                     
                     self.userdata = res
                     
-                    print("")
-                    print("")
-                    
-                    print("")
-                    print("")
+
                     print(self.userdata)
                     
-                    print("---- end user data -----")
                     finishedReq = self.userdata.posts.count
-                    print("requests: \(finishedReq)")
-                    print("")
-                    print("")
-                    print("")
-                    print("")
-                    
-                    print("")
+                    print("total requests to do: \(finishedReq)")
                     
                     
                     self.getPosts()
@@ -246,36 +194,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                }
            }
         }
-        
-        
-        
-        
-        
-        
-        /*if let url = URL(string: "https://sharey.id/user_emails/sean.z@gmx.de/userinfo.json") {
-
-            
-            URLSession.shared.dataTask(with: url) { data, response, error in
-              if let data = data {
-                  do {
-                     let res = try JSONDecoder().decode(Response.self, from: data)
-                     print(res.posts)
-                    self.posts_of_user = res.posts
-                    
-                    self.userdata = res
-                    print(self.userdata)
-                    
-                    
-                    
-                    
-                    
-                    self.getPosts()
-                  } catch let error {
-                     print(error)
-                  }
-               }
-           }.resume()
-        }*/
 
     }
     
@@ -283,9 +201,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
 
             for i in 0...self.posts_of_user.count-1 {
                 
-                //DispatchQueue.global(qos: .background).async {
-
-                    // Background Thread
                    
                     if let url = URL(string: "https://sharey.id/user_emails/sean.z@gmx.de/posts/"+self.posts_of_user[i]+".json") {
                        TaskManager.shared.dataTask(with: url) { (data, response, error) in
@@ -293,22 +208,14 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                               do {
                                  let res = try JSONDecoder().decode(postsData.self, from: data)
                                  
-                                print("")
-                                print("")
-                                print("")
                                 
                     
-                                
-                                 //self.post_data.append(res)
                                  self.post_data.insert(res, at: i)
                                  finishedReq -= 1
                                 
                                 
                                  print("post_data\(i) \(self.post_data[i])")
                                  
-                                 print("")
-                                 print("")
-                                 print("")
                                  
                                 
                               } catch let error {
@@ -316,76 +223,8 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                               }
                            }
                        }
-                    }
-                    
-                    
-                    //DispatchQueue.main.async {
-                        // Run UI Updates
-                       //self.bottomTVC.reloadData()
-
-            //}
-            //DispatchQueue.main.async {
-                //self.do_table_refresh()
-            //}
+                    }          
         }
-        //self.do_table_refresh()
-        
-        
-        
-        
-        
-        
-        /*
-        
-        //DispatchQueue.global(qos: .background).async {
-
-            for i in 0...self.posts_of_user.count-1 {
-                
-                DispatchQueue.global(qos: .background).async {
-
-                    // Background Thread
-                   
-                    if let url = URL(string: "https://sharey.id/user_emails/sean.z@gmx.de/posts/"+self.posts_of_user[i]+".json") {
-                       URLSession.shared.dataTask(with: url) { data, response, error in
-                          if let data = data {
-                              do {
-                                 let res = try JSONDecoder().decode(postsData.self, from: data)
-                                 
-                                
-                                 //self.post_data.append(res)
-                                 self.post_data.insert(res, at: i)
-                                 
-                                
-                                
-                                
-                                 print(self.post_data[i].liked_by)
-                                 
-                                 
-                                 
-                                
-                              } catch let error {
-                                 print(error)
-                              }
-                           }
-                       }.resume()
-                    }
-                    
-                    
-                    DispatchQueue.main.async {
-                        // Run UI Updates
-                       //self.bottomTVC.reloadData()
-                    }
-                }
-
-            //}
-            //DispatchQueue.main.async {
-                //self.do_table_refresh()
-            //}
-        }
-        self.do_table_refresh()
-        
-    */
-        
         
     }
     
@@ -411,9 +250,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         return posts_of_user.count
     }
     
-    
-    
-    
     }
     
     
@@ -431,58 +267,11 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         if tableView == topTVC {
             var cell = tableView.dequeueReusableCell(withIdentifier: "userCell", for: indexPath) as! topTVCell
             
-            cell.profile_picture.layer.cornerRadius = cell.profile_picture.frame.height/2
-            
-            let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.prominent)
-            let blurEffectView = UIVisualEffectView(effect: blurEffect)
-            blurEffectView.frame = view.bounds
-            blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            cell.profile_picture_background.addSubview(blurEffectView)
-            
-            let blurEffectR = UIBlurEffect(style: UIBlurEffect.Style.dark)
-            let blurEffectViewR = UIVisualEffectView(effect: blurEffect)
-            blurEffectViewR.frame = view.bounds
-            blurEffectViewR.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            
-            cell.quote1.addSubview(blurEffectViewR)
-            
-            
-            
-            let blurEffectI = UIBlurEffect(style: UIBlurEffect.Style.light)
-            let blurEffectViewI = UIVisualEffectView(effect: blurEffect)
-            blurEffectViewI.frame = view.bounds
-            blurEffectViewI.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            
-            cell.info_background.addSubview(blurEffectViewI)
-            
-            cell.profile_picture_background.layer.cornerRadius = 10
-            cell.profile_picture_background.clipsToBounds = true
-            cell.quote1.layer.cornerRadius = 5
-            cell.quote1.clipsToBounds = true
-            cell.info_background.layer.cornerRadius = 5
-            cell.info_background.clipsToBounds = true
-            
-            
-            
-            
-            cell.name_of_user.text = userdata.name
-            cell.age_of_user.text = userdata.birthdate
-            cell.distance_of_user.text = userdata.country
-            cell.quote_top.text = userdata.quote
-            
-            cell.profile_picture.downloaded(from: "https://sharey.id/img/VUlwVE3xuJjLWpE5p1GChZwfso7u50i1VDxRiAoNjIyg7dmxf39x2GMv4TZaUhbPVIHdj51DNzUVNht2kDznjlSofRz99KY5tFiNLkqzTluGCXJXAilUEdjT5S2fD1k7HDUsXl1RGwyjthh4zCZeQj7Wb9bPawWS9Qk7bmYSSxclOtqo5qCWJJSVT4K4AGWKxhSJDQBv.jpg")
-            cell.profile_picture_background.downloaded(from: "https://sharey.id/img/VUlwVE3xuJjLWpE5p1GChZwfso7u50i1VDxRiAoNjIyg7dmxf39x2GMv4TZaUhbPVIHdj51DNzUVNht2kDznjlSofRz99KY5tFiNLkqzTluGCXJXAilUEdjT5S2fD1k7HDUsXl1RGwyjthh4zCZeQj7Wb9bPawWS9Qk7bmYSSxclOtqo5qCWJJSVT4K4AGWKxhSJDQBv.jpg")
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
         } else if tableView == middleTVC {
             cell = tableView.dequeueReusableCell(withIdentifier: "showDataCell", for: indexPath)
+            
+            
         } else {
            var cell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! postsTableViewCell
            
@@ -490,75 +279,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
             cell.like_post_ = { sender in
                
                 impact.impactOccurred()
-                
-                /*if self.post_data[indexPath.row].liked_by.contains(pub_username_id) {
-                    print("unlike -> \(self.post_data[indexPath.row].post_id)")
-                    
-                    
-                    
-                    
-                    
-                    
-                } else {*/
-                    print("like -> \(self.post_data[indexPath.row].post_id)")
-                    
-                    
-                    if let url = URL(string: "https://sharey.id/ios_app_controller/like_post.php?s="+pub_username_id+"&pid="+self.post_data[indexPath.row].post_id+"&liked_by="+pub_username_id) {
-                       TaskManager.shared.dataTask(with: url) { data, response, error in
-                          if let data = data {
-                              do {
-                                  let htmlRes = try String(contentsOf: url, encoding: .ascii)
-                                  print("HTML : \(htmlRes)")
-                                  
-                                if htmlRes == "liked" {
-                                    
-                                    print("liked")
-                                    
-                                } else if htmlRes == "unliked" {
-                                    
-                                    print("unliked")
-                                    
-                                    
-                                    
-                                    /*
-                                     let unliked = UIAlertController(title: "Unliked", message: "", preferredStyle: .alert)
-                                     self.present(unliked, animated: true)
-                                     
-                                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2){
-                                       
-                                       unliked.dismiss(animated: true, completion: nil)
-                                     }
-                                     
-                                     
-                                     
-                                     
-                                     
-                                     */
-                                    
-                                }
-                                  
-                                  
-                              } catch let error {
-                                  print("Error: \(error)")
-                              }
-                           }
-                       }
-                    }
-                    
-                    
-                    
-                    
-                    
-                    
-                //}
-                
-                
-                
-                
-                
-                
-                
-                
+                print("like -> \(self.post_data[indexPath.row].post_id)")
                 
             }
             
@@ -581,34 +302,12 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                 impact.impactOccurred()
                 print("report -> \(self.post_data[indexPath.row].post_id)")
                 
-                let post_id = self.post_data[indexPath.row].post_id
-                
-                
-                report_user_image_url = self.userdata.image_string
-                report_name_of_user = self.userdata.name
-                report_join_date = "n/a"
-                report_question_text = self.post_data[indexPath.row].question_text
-                report_answer_text = self.post_data[indexPath.row].answer_text
-                report_post_id = self.post_data[indexPath.row].post_id
-                
-                if self.post_data[indexPath.row].post_id != "" {
-                self.performSegue(withIdentifier: "reportPostwithID", sender: self)
-                } else {
-                    let info = UIAlertController(title: "Post not found", message: "", preferredStyle: .alert)
-                    self.present(info, animated: true)
-                    
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2){
-                      
-                      info.dismiss(animated: true, completion: nil)
-                    }
-                }
             }
             
             
+            // here is the data being loaded into the cell
             
             
-            
-            //DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.00) {
             while(finishedReq != 0) {
                 
                 
@@ -653,15 +352,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                 cell.animating.isHidden = true
             }
             
-                    //cell.question_text.text = self.question_text[indexPath.row]
-                    //cell.answer_text.text = self.answer_text[indexPath.row]
-            //}
-            
-            
-            
-            //cell.question_text.text = question_text[indexPath.row]
-            //cell.answer_text.text = answer_text[indexPath.row]
-        
         
         
         return cell
